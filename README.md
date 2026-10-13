@@ -1,4 +1,4 @@
-# Namaz Tracker
+# Noor Namaz
 
 A simple tracker for the five daily prayers (Fajr, Dhuhr, Asr, Maghrib, Isha).
 
