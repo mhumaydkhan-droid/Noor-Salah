@@ -4,6 +4,7 @@ A simple tracker for the five daily prayers (Fajr, Dhuhr, Asr, Maghrib, Isha).
 
 - Green tick = prayed on time
 - Yellow = qaza (shows the fard rakat to make up)
+- Tap the date at the top to pick any day or year from a calendar
 - Qaza counter and a month-end summary with total rakat to pray
 - Data is stored privately in each person's own browser (localStorage)
 - Works offline and can be installed to the home screen (PWA)
