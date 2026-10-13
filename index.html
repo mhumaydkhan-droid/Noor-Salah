@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Namaz Tracker</title>
+<meta name="theme-color" content="#E6E9EC">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Namaz">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E6E9EC;--card:#F6F7F9;--ink:#2B353C;--mute:#6F7C84;--line:#D0D6DB;--green:#1F9D55;--green-soft:#DDF3E6;--yellow:#F2B705;--yellow-soft:#FFF3C7;--yellow-ink:#5C4500;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#22272B;--card:#2C3237;--ink:#E4E8EB;--mute:#9AA4AB;--line:#3A4348;--green:#3CC47A;--green-soft:#173A29;--yellow:#F5C518;--yellow-soft:#3B3210;--yellow-ink:#F5DE8A}}
+:root[data-theme="dark"]{--bg:#22272B;--card:#2C3237;--ink:#E4E8EB;--mute:#9AA4AB;--line:#3A4348;--green:#3CC47A;--green-soft:#173A29;--yellow:#F5C518;--yellow-soft:#3B3210;--yellow-ink:#F5DE8A}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+main{max-width:460px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;font-weight:800;margin:4px 0 16px;letter-spacing:-.01em}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}
+.nav button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;cursor:pointer}
+.nav button:disabled{opacity:.35;cursor:default}
+.date{text-align:center;flex:1}
+.date b{display:block;font-size:17px;font-weight:800}
+.date span{font-size:13px;color:var(--mute)}
+.today{display:block;margin:0 auto 14px;background:none;border:0;color:var(--green);font:600 13px Manrope,system-ui,sans-serif;cursor:pointer;visibility:hidden}
+.today.show{visibility:visible}
+.prog{display:flex;gap:6px;margin-bottom:14px}
+.prog i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.prog i.g{background:var(--green)}.prog i.y{background:var(--yellow)}
+.list{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 12px 12px 16px;transition:background .2s,border-color .2s}
+.row.g{background:var(--green-soft);border-color:var(--green)}
+.row.y{background:var(--yellow-soft);border-color:var(--yellow)}
+.name{font-size:17px;font-weight:700}
+.btns{display:flex;gap:8px}
+.btn{height:44px;min-width:44px;padding:0 14px;border-radius:22px;border:1.5px solid var(--line);background:transparent;color:var(--mute);font:700 14px Manrope,system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px;transition:transform .12s,background .2s}
+.btn:active{transform:scale(.94)}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.btn.tick{border-color:var(--green);color:var(--green)}
+.btn.tick[aria-pressed="true"]{background:var(--green);color:#fff}
+.btn.qaza{border-color:var(--yellow);color:var(--yellow-ink)}
+.btn.qaza[aria-pressed="true"]{background:var(--yellow);color:#2B2100}
+.btn svg{width:18px;height:18px}
+.qc{margin-top:20px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.qc h2{margin:0 0 2px;font-size:15px;font-weight:700}
+.qc p{margin:0;font-size:13px;color:var(--mute)}
+.big{font-size:40px;font-weight:800;color:var(--yellow-ink);background:var(--yellow-soft);border:1.5px solid var(--yellow);border-radius:14px;min-width:76px;text-align:center;padding:4px 12px;line-height:1.2}
+.foot{margin-top:14px;text-align:center;font-size:12px;color:var(--mute)}
+[hidden]{display:none!important}
+.who{font-size:12.5px;color:var(--mute);margin:-8px 0 14px;word-break:break-all}
+.rk{font-size:12.5px;font-weight:600;color:var(--yellow-ink);margin-top:2px}
+.sumbtn{width:100%;margin-top:12px;height:46px;border-radius:14px;border:1.5px solid var(--yellow);background:var(--yellow-soft);color:var(--yellow-ink);font:700 15px Manrope,system-ui,sans-serif;cursor:pointer}
+.sumbtn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.sum{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.sum h2{margin:0 0 10px;font-size:16px;font-weight:800}
+.srow{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.srow span:last-child{color:var(--mute);text-align:right}
+.stot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-weight:800}
+.stot b{font-size:26px;color:var(--yellow-ink);background:var(--yellow-soft);border:1.5px solid var(--yellow);border-radius:12px;padding:2px 12px}
+.sall{margin:10px 0 0;font-size:13px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Namaz Tracker</h1>
+  <div class="who" id="who"></div>
+  <div class="nav">
+    <button id="prev" aria-label="Previous day">&#8249;</button>
+    <div class="date"><b id="dlabel"></b><span id="dsub"></span></div>
+    <button id="next" aria-label="Next day">&#8250;</button>
+  </div>
+  <button class="today" id="today">Back to today</button>
+  <div class="prog" id="prog"></div>
+  <div class="list" id="list"></div>
+  <section class="qc">
+    <div><h2>Qaza counter</h2><p id="qsub"></p></div>
+    <div class="big" id="qtotal">0</div>
+  </section>
+  <button class="sumbtn" id="sumbtn" aria-expanded="false">Month-end qaza summary</button>
+  <div class="sum" id="sum" hidden></div>
+  <div class="foot">Green = prayed on time &nbsp;|&nbsp; Yellow = qaza. Tap again to clear.</div>
+</main>
+<script>
+(function(){
+var PRAYERS=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+var RAK={Fajr:2,Dhuhr:4,Asr:4,Maghrib:3,Isha:4};
+var KEY="namaz-tracker-v1";
+var data={};
+try{var raw=localStorage.getItem(KEY);if(raw)data=JSON.parse(raw)||{};}catch(e){data={};}
+var cloudRef=null;
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}
+  if(cloudRef){cloudRef.set({days:data}).catch(function(){cloudRef=null;setWho("Saved on this device only");});}
+}
+function setWho(t){document.getElementById("who").textContent=t;}
+async function initCloud(){
+  setWho("Saved on this device only");
+  try{
+    if(!window.claude||!claude.use)return;
+    var user=await claude.use("user"),db=await claude.use("db");
+    if(!user||!db)return;
+    var me=await user.me();
+    if(!me||!me.id)return;
+    var ref=db.doc("data/users/"+me.id+"/namaz");
+    var snap=await ref.get();
+    var d=snap.exists?snap.data():null;
+    if(d&&d.days){data=JSON.parse(JSON.stringify(d.days));}
+    else if(Object.keys(data).length){await ref.set({days:data});}
+    cloudRef=ref;
+    setWho("Saved to your account"+(me.email?": "+me.email:(me.name?": "+me.name:"")));
+    render();
+  }catch(e){cloudRef=null;setWho("Saved on this device only");}
+}
+function pad(n){return n<10?"0"+n:""+n}
+function iso(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+var todayD=new Date();todayD.setHours(0,0,0,0);
+var cur=new Date(todayD);
+var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+var list=document.getElementById("list");
+function toggle(p,val){
+  var k=iso(cur);var day=data[k]||(data[k]={});
+  if(day[p]===val)delete day[p];else day[p]=val;
+  if(!Object.keys(day).length)delete data[k];
+  save();render();
+}
+function render(){
+  var k=iso(cur),day=data[k]||{};
+  var isToday=iso(cur)===iso(todayD);
+  document.getElementById("dlabel").textContent=isToday?"Today":cur.toLocaleDateString(undefined,{weekday:"long"});
+  document.getElementById("dsub").textContent=cur.toLocaleDateString(undefined,{day:"numeric",month:"long",year:"numeric"});
+  document.getElementById("next").disabled=cur>=todayD;
+  document.getElementById("today").className="today"+(isToday?"":" show");
+  var prog=document.getElementById("prog");prog.innerHTML="";
+  list.innerHTML="";
+  PRAYERS.forEach(function(p){
+    var s=day[p];
+    var i=document.createElement("i");i.className=s||"";prog.appendChild(i);
+    var row=document.createElement("div");row.className="row"+(s?" "+s:"");
+    var n=document.createElement("div");var nm=document.createElement("div");nm.className="name";nm.textContent=p;n.appendChild(nm);
+    if(s==="y"){var rk=document.createElement("div");rk.className="rk";rk.textContent=RAK[p]+" fard rakat to pray";n.appendChild(rk);}
+    var b=document.createElement("div");b.className="btns";
+    var t=document.createElement("button");t.className="btn tick";t.setAttribute("aria-pressed",s==="g");t.setAttribute("aria-label",p+" prayed on time");t.innerHTML=CHECK+"<span>On time</span>";
+    t.onclick=function(){toggle(p,"g")};
+    var q=document.createElement("button");q.className="btn qaza";q.setAttribute("aria-pressed",s==="y");q.setAttribute("aria-label",p+" qaza");q.innerHTML="<span>Qaza</span>";
+    q.onclick=function(){toggle(p,"y")};
+    b.appendChild(t);b.appendChild(q);row.appendChild(n);row.appendChild(b);list.appendChild(row);
+  });
+  var total=0,month=0,mk=cur.getFullYear()+"-"+pad(cur.getMonth()+1);
+  Object.keys(data).forEach(function(d){
+    var c=0;for(var p in data[d])if(data[d][p]==="y")c++;
+    total+=c;if(d.indexOf(mk)===0)month+=c;
+  });
+  document.getElementById("qtotal").textContent=total;
+  document.getElementById("qsub").textContent=month+" in "+cur.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  summary();
+}
+document.getElementById("prev").onclick=function(){cur.setDate(cur.getDate()-1);render()};
+document.getElementById("next").onclick=function(){if(cur<todayD){cur.setDate(cur.getDate()+1);render()}};
+document.getElementById("today").onclick=function(){cur=new Date(todayD);render()};
+var sumOpen=false;
+function summary(){
+  var box=document.getElementById("sum"),btn=document.getElementById("sumbtn");
+  btn.textContent=sumOpen?"Hide month summary":"Month-end qaza summary";
+  btn.setAttribute("aria-expanded",sumOpen);
+  box.hidden=!sumOpen;
+  if(!sumOpen)return;
+  var mk=cur.getFullYear()+"-"+pad(cur.getMonth()+1),counts={},allR=0,mp=0,mr=0;
+  PRAYERS.forEach(function(p){counts[p]=0});
+  Object.keys(data).forEach(function(d){
+    for(var p in data[d]){if(data[d][p]==="y"){allR+=RAK[p];if(d.indexOf(mk)===0){counts[p]++;mp++;mr+=RAK[p];}}}
+  });
+  var h="<h2>"+cur.toLocaleDateString(undefined,{month:"long",year:"numeric"})+" qaza</h2>";
+  PRAYERS.forEach(function(p){
+    h+='<div class="srow"><span>'+p+' ('+RAK[p]+' fard)</span><span>'+counts[p]+' missed = '+counts[p]*RAK[p]+' rakat</span></div>';
+  });
+  h+='<div class="stot"><span>'+mp+' prayers to make up</span><b>'+mr+' rakat</b></div>';
+  h+='<p class="sall">All months together: '+allR+' fard rakat of qaza.</p>';
+  box.innerHTML=h;
+}
+document.getElementById("sumbtn").onclick=function(){sumOpen=!sumOpen;summary()};
+render();
+initCloud();
+})();
+</script>
+</body>
+</html>
